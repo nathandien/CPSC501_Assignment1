@@ -10,7 +10,6 @@ public class GameData
 	private int vitalityPoints;
 	private int attkdmgPoints;
 	
-	private int maxExp;
 
 	
 	public GameData(String nm, int attk, int maxHP)
@@ -19,12 +18,10 @@ public class GameData
 		this.attkdmg = attk;
 		this.maxHealth = maxHP;
 		this.health = maxHP;
-	}
-	
-		public GameData()
-	{
 		this.vitalityPoints = 0;
 	}
+	
+
 	
 	public String getName() {
 		return name;
@@ -34,7 +31,7 @@ public class GameData
 	}
 	//Name of a monster
 	
-	public int getHealthPoints() {
+	public int getVitality() {
 		return vitalityPoints;
 	}
 	public void incVitality() {

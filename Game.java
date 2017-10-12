@@ -161,7 +161,7 @@ public class Game {
 										player.incVitality();
 										//Allocates 2 points to health (10 per point=20+ to maximum health)
 										
-										System.out.println("You now have " + player.getHealthPoints() + " health points (max health: " + player.getMaxHealth() + ")");
+										System.out.println("You now have " + player.getVitality() + " health points (max health: " + player.getMaxHealth() + ")");
 										//Allocates a point to health
 										
 										player.setCurrentHealth(player.getMaxHealth());
