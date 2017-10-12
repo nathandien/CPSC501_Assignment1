@@ -7,20 +7,23 @@ public class GameData
 	
 	private int maxHealth;
 	private int health;
-	private int healthPoints;
+	private int vitalityPoints;
 	private int attkdmgPoints;
 	
 	private int maxExp;
 
 	
-	public GameData(String nm, int attk)
+	public GameData(String nm, int attk, int maxHP)
 	{
-		name = nm;
-		attkdmg = attk;
+		this.name = nm;
+		this.attkdmg = attk;
+		this.maxHealth = maxHP;
+		this.health = maxHP;
 	}
 	
 		public GameData()
 	{
+		this.vitalityPoints = 0;
 	}
 	
 	public String getName() {
@@ -32,10 +35,11 @@ public class GameData
 	//Name of a monster
 	
 	public int getHealthPoints() {
-		return healthPoints;
+		return vitalityPoints;
 	}
-	public void setHealthPoints(int healthPoints) {
-		this.healthPoints = healthPoints;
+	public void incVitality() {
+		this.vitalityPoints = vitalityPoints + 2;
+		this.updateMaxHealth();
 	}
 	//Number of points assigned to health by the player (initially 0)
 	//Increases the maximum health of the player
@@ -43,15 +47,17 @@ public class GameData
 	public int getMaxHealth() {
 		return maxHealth;
 	}
-	public void setMaxHealth(int maxHealth) {
-		this.maxHealth = 100+10*healthPoints;
+	public void updateMaxHealth() {
+		this.maxHealth = 100+10*vitalityPoints;
 	}
 	//Maximum health of the player
 	
-	public int getHealth() {
+
+	
+	public int getCurrentHealth() {
 		return health;
 	}
-	public void setHealth(int health) {
+	public void setCurrentHealth(int health) {
 		this.health = health;
 	}
 	//Actual health of the player
@@ -74,11 +80,8 @@ public class GameData
 	//The total attack damage
 	//More attack damage = more damage
 	
-	public double getDamage() {
-		return damage;
-	}
-	public void setDamage(double damage) {
-		this.damage = (double)Math.round((attkdmg/2)+(Math.random()*((attkdmg-attkdmg/2)+1)*1))/1;
+	public double calculateDmgDealt() {
+		return ((double)Math.round((attkdmg/2)+(Math.random()*((attkdmg-attkdmg/2)+1)*1))/1);
 	}
 	//Calculates for the damage dealt and the rounds it
 }

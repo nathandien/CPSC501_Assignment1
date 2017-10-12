@@ -12,47 +12,17 @@ public class Game {
 		Scanner input = new Scanner (System.in);
 		Random rnd=new Random();
 
-		GameData player = new GameData();
-		player.setAttkdmg(10);
-		player.setAttkdmgPoints(0);
-
-		player.setHealthPoints(0);
-		player.setMaxHealth(100);
-		player.setHealth(100);
+		GameData player = new GameData("Player", 10, 100);
 		
 		
 		GameData monster[] = new GameData[6];
 		
-		monster[0] = new GameData();
-		monster[0].setName("dog");
-		monster[0].setAttkdmg(4);
-		monster[0].setMaxHealth(30);
-		monster[0].setHealth(30);
-		
-		monster[1] = new GameData();
-		monster[1].setName("boar");
-		monster[1].setAttkdmg(3);
-		monster[1].setMaxHealth(50);
-		monster[1].setHealth(50);
-		
-		monster[2] = new GameData();
-		monster[2].setName("skeleton");
-		monster[2].setAttkdmg(6);
-		monster[2].setDamage(1);
-		monster[2].setMaxHealth(25);
-		monster[2].setHealth(25);
-		
-		monster[3] = new GameData();
-		monster[3].setName("giant ant");
-		monster[3].setAttkdmg(4);
-		monster[3].setMaxHealth(45);
-		monster[3].setHealth(45);
-		
-		monster[4] = new GameData();
-		monster[4].setName("zombie");
-		monster[4].setAttkdmg(7);
-		monster[4].setMaxHealth(20);
-		monster[4].setHealth(20);
+		monster[0] = new GameData("dog", 4, 30);
+		monster[1] = new GameData("boar", 3, 50);
+		monster[2] = new GameData("skeleton", 6, 25);
+		monster[3] = new GameData("giant ant", 4, 45);
+		monster[4] = new GameData("zombie", 7, 20);
+
 	
 		
 		int start = 0, whatDo, monsterNumber = 0, monsterAppear = 0, action, damageDealtPlayer, damageDealtMonster, levelPoint;
@@ -63,7 +33,7 @@ public class Game {
 			System.out.println("Press 1 to begin!");
 			start = input.nextInt();
 			
-			while(player.getHealth() > 0 && start == 1)
+			while(player.getCurrentHealth() > 0 && start == 1)
 			{
 				//Starts the game
 				System.out.println("\nWhat would you like to do?");
@@ -78,19 +48,19 @@ public class Game {
 				{
 					if(potion > 0)//Player must have a potion to use it
 					{
-						if(player.getHealth() == player.getMaxHealth())
+						if(player.getCurrentHealth() == player.getMaxHealth())
 						{
 							System.out.println("You are already full health");
 						}
 						else
 						{
-						player.setHealth(player.getHealth() + 50); //Heals the player for 50 health
-						if(player.getHealth() > player.getMaxHealth())
+						player.setCurrentHealth(player.getCurrentHealth() + 50); //Heals the player for 50 health
+						if(player.getCurrentHealth() > player.getMaxHealth())
 						{
-							player.setHealth(player.getMaxHealth());
+							player.setCurrentHealth(player.getMaxHealth());
 							//Checks to see if the potion heals the player for more than their maximum health, if so, changes it to maximum amount
 						}
-						System.out.println("You now have " + player.getHealth() + "/" + player.getMaxHealth() + " health now");
+						System.out.println("You now have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health now");
 						
 						potion--; 
 						//Consumes potion (removes 1)
@@ -131,17 +101,15 @@ public class Game {
 					
 						if(action == 1)//Attack monster
 						{
-							player.setDamage(1);
-							//Randomizes damage dealt by player
 							
-							damageDealtMonster = (int)player.getDamage();
-							System.out.println("\nYou inflicted " + player.getDamage() + " damage");
-							monster[monsterNumber].setHealth(monster[monsterNumber].getHealth() - damageDealtMonster);
-							System.out.println("The " + monster[monsterNumber].getName() + " has " + monster[monsterNumber].getHealth() + "/" + monster[monsterNumber].getMaxHealth() + " health remaining");
+							damageDealtMonster = (int)player.calculateDmgDealt();
+							System.out.println("\nYou inflicted " + damageDealtMonster + " damage");
+							monster[monsterNumber].setCurrentHealth(monster[monsterNumber].getCurrentHealth() - damageDealtMonster);
+							System.out.println("The " + monster[monsterNumber].getName() + " has " + monster[monsterNumber].getCurrentHealth() + "/" + monster[monsterNumber].getMaxHealth() + " health remaining");
 							//Deals damage to monster (subtracts health by damage)
 						
 							
-							if(monster[monsterNumber].getHealth() <= 0) //Monster has been defeated
+							if(monster[monsterNumber].getCurrentHealth() <= 0) //Monster has been defeated
 							{
 								potionChance = rnd.nextInt(10); //Randomizes a number to determine if player receives a potion
 								if(potionChance <= 3)
@@ -154,9 +122,9 @@ public class Game {
 								
 								
 								
-								expGained = rnd.nextInt(25) + 5 + ((monster[monsterNumber].getHealth()*2 + (int)(monster[monsterNumber].getAttkdmg())*5)/3);
+								expGained = rnd.nextInt(25) + 5 + ((monster[monsterNumber].getCurrentHealth()*2 + (int)(monster[monsterNumber].getAttkdmg())*5)/3);
 								haveExp = haveExp + expGained;
-								monster[monsterNumber].setHealth(20);
+								monster[monsterNumber].setCurrentHealth(20);
 								//Player gains experience based on monster, and resets the monsters health
 							
 								System.out.println("\nYou have defeated the monster and gained " + expGained + " experience" );
@@ -184,38 +152,35 @@ public class Game {
 							
 										System.out.println("You now have " + player.getAttkdmgPoints() + " attack damage points");
 									
-										player.setHealth(player.getMaxHealth());
+										player.setCurrentHealth(player.getMaxHealth());
 										//Restores player's health back to maximum
 										}
 									
 									if(levelPoint == 2)
 									{
-										player.setHealthPoints(player.getHealthPoints()+2);
-										player.setMaxHealth(1);
+										player.incVitality();
 										//Allocates 2 points to health (10 per point=20+ to maximum health)
 										
 										System.out.println("You now have " + player.getHealthPoints() + " health points (max health: " + player.getMaxHealth() + ")");
 										//Allocates a point to health
 										
-										player.setHealth(player.getMaxHealth());
+										player.setCurrentHealth(player.getMaxHealth());
 										//Restores player's health back to maximum
 									}
 								}
 								break;
 								//Ends the fight if the monsters health reaches 0
 							}
-							if(monster[monsterNumber].getHealth() > 0) //Monster is still alive and deals damage to player
+							if(monster[monsterNumber].getCurrentHealth() > 0) //Monster is still alive and deals damage to player
 							{
-								monster[monsterNumber].setDamage(1);
-								//Randomizes damage dealt by monster
-								
-								damageDealtPlayer = (int)monster[monsterNumber].getDamage();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + monster[monsterNumber].getDamage() + " damage to you");
-								player.setHealth(player.getHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getHealth() + "/" + player.getMaxHealth() + " health remaining\n");
+							
+								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
+								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
+								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
+								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
 								//Monster attacks and deals damage to player
 								
-								if(player.getHealth() <= 0)
+								if(player.getCurrentHealth() <= 0)
 								{
 									System.out.println("Game over \nYou have died");
 									break;
@@ -229,35 +194,33 @@ public class Game {
 						{
 							if(potion > 0)//Player must have a potion to use it
 							{
-								if(player.getHealth() == player.getMaxHealth())
+								if(player.getCurrentHealth() == player.getMaxHealth())
 								{
 									System.out.println("You are already full health");
 								}
 								else
 								{
-								player.setHealth(player.getHealth() + 50); //Heals the player for 50 health
-								if(player.getHealth() > player.getMaxHealth())
+								player.setCurrentHealth(player.getCurrentHealth() + 50); //Heals the player for 50 health
+								if(player.getCurrentHealth() > player.getMaxHealth())
 								{
-									player.setHealth(player.getHealth()-(player.getHealth()-player.getMaxHealth()));
+									player.setCurrentHealth(player.getCurrentHealth()-(player.getCurrentHealth()-player.getMaxHealth()));
 									//Checks to see if the potion heals the player for more than their maximum health, if so, changes it to maximum amount
 								}
-								System.out.println("You now have " + player.getHealth() + "/" + player.getMaxHealth() + " health now");
+								System.out.println("You now have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health now");
 								
 								potion--;
 								//Consumes potion (removes 1)
 								
 		
 								//Monster will attack player after using potion
-								monster[monsterNumber].setDamage(1);
-								//Randomizes damage dealt by monster
 							
-								damageDealtPlayer = (int)monster[monsterNumber].getDamage();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + monster[monsterNumber].getDamage() + " damage to you");
-								player.setHealth(player.getHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getHealth() + "/" + player.getMaxHealth() + " health remaining\n");
+								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
+								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
+								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
+								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
 								//Monster attacks and deals damage to player
 							
-								if(player.getHealth() <= 0)
+								if(player.getCurrentHealth() <= 0)
 								{
 									System.out.println("Game over \nYou have died");
 									break;
@@ -284,16 +247,14 @@ public class Game {
 								System.out.println("You failed to flee away from the monster");
 								
 								//Deals damage to the player if they fail to flee
-								monster[monsterNumber].setDamage(1);
-								//Randomizes damage dealt by monster
 							
-								damageDealtPlayer = (int)monster[monsterNumber].getDamage();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + monster[monsterNumber].getDamage() + " damage to you");
-								player.setHealth(player.getHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getHealth() + "/" + player.getMaxHealth() + " health remaining\n");
+								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
+								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
+								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
+								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
 								//Monster attacks and deals damage to player
 							
-								if(player.getHealth() <= 0)
+								if(player.getCurrentHealth() <= 0)
 								{
 									System.out.println("Game over \nYou have died");
 									break;
