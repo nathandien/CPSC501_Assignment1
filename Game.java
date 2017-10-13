@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-
+	
 	/**
 	 * @param arg
 	 */
@@ -12,7 +12,7 @@ public class Game {
 		Scanner input = new Scanner (System.in);
 		Random rnd=new Random();
 
-		GameData player = new GameData("Player", 10, 100);
+		Player player = new Player("Player", 10, 100);
 		
 		
 		GameData monster[] = new GameData[6];
@@ -46,27 +46,7 @@ public class Game {
 				
 				if(whatDo == 2)//Use potion
 				{
-					if(potion > 0)//Player must have a potion to use it
-					{
-						if(player.getCurrentHealth() == player.getMaxHealth())
-						{
-							System.out.println("You are already full health");
-						}
-						else
-						{
-						player.setCurrentHealth(player.getCurrentHealth() + 50); //Heals the player for 50 health
-						if(player.getCurrentHealth() > player.getMaxHealth())
-						{
-							player.setCurrentHealth(player.getMaxHealth());
-							//Checks to see if the potion heals the player for more than their maximum health, if so, changes it to maximum amount
-						}
-						System.out.println("You now have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health now");
-						
-						potion--; 
-						//Consumes potion (removes 1)
-						
-						}
-					}
+					player.usePotion();
 				}
 				
 				if(whatDo == 1)
@@ -192,26 +172,15 @@ public class Game {
 						
 						if(action == 2)//Use potion
 						{
-							if(potion > 0)//Player must have a potion to use it
+
+							if(player.getCurrentHealth() == player.getMaxHealth())
 							{
-								if(player.getCurrentHealth() == player.getMaxHealth())
-								{
-									System.out.println("You are already full health");
-								}
-								else
-								{
-								player.setCurrentHealth(player.getCurrentHealth() + 50); //Heals the player for 50 health
-								if(player.getCurrentHealth() > player.getMaxHealth())
-								{
-									player.setCurrentHealth(player.getCurrentHealth()-(player.getCurrentHealth()-player.getMaxHealth()));
-									//Checks to see if the potion heals the player for more than their maximum health, if so, changes it to maximum amount
-								}
-								System.out.println("You now have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health now");
+								System.out.println("You are already full health");
+							}
+							else
+							{
 								
-								potion--;
-								//Consumes potion (removes 1)
-								
-		
+								player.usePotion();
 								//Monster will attack player after using potion
 							
 								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
@@ -226,12 +195,8 @@ public class Game {
 									break;
 									//Ends the game if the player's health drops to or below 0
 								}
-								}
 							}
-							else
-							{
-								System.out.println("You do not have any potions! \n");
-							}
+							
 						}
 						
 						if(action == 3)//Player attempts to flee

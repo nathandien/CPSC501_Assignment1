@@ -7,18 +7,18 @@ public class GameData
 	
 	private int maxHealth;
 	private int health;
-	private int vitalityPoints;
+
 	private int attkdmgPoints;
 	
 
 	
-	public GameData(String nm, int attk, int maxHP)
+	public GameData(String nm, int attk, int maxHealth)
 	{
 		this.name = nm;
 		this.attkdmg = attk;
-		this.maxHealth = maxHP;
-		this.health = maxHP;
-		this.vitalityPoints = 0;
+		this.maxHealth = maxHealth;
+		this.health = maxHealth;
+
 	}
 	
 
@@ -29,33 +29,33 @@ public class GameData
 	public void setName(String name) {
 		this.name = name;
 	}
-	//Name of a monster
+	//Name of a character
 	
-	public int getVitality() {
-		return vitalityPoints;
-	}
-	public void incVitality() {
-		this.vitalityPoints = vitalityPoints + 2;
-		this.updateMaxHealth();
-	}
-	//Number of points assigned to health by the player (initially 0)
-	//Increases the maximum health of the player
 	
 	public int getMaxHealth() {
 		return maxHealth;
 	}
-	public void updateMaxHealth() {
-		this.maxHealth = 100+10*vitalityPoints;
-	}
-	//Maximum health of the player
 	
+	public void setMaxHealth(int maxHealth) {
+		this.maxHealth = maxHealth;
+	}
 
 	
 	public int getCurrentHealth() {
 		return health;
 	}
 	public void setCurrentHealth(int health) {
-		this.health = health;
+		
+		if(health > this.maxHealth) {
+			this.health = this.maxHealth;
+		}
+		else if(health < 0) {
+			this.health = 0;
+		}
+		else {
+			this.health = health;
+		}
+		
 	}
 	//Actual health of the player
 	
