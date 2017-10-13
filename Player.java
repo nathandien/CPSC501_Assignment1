@@ -26,7 +26,7 @@ public class Player extends GameData {
 		return vitalityPoints;
 	}
 	public void incVitality() {
-		this.vitalityPoints = vitalityPoints + 2;
+		this.vitalityPoints += 2;
 		this.updateMaxHealth();
 	}
 	//Number of points assigned to health by the player (initially 0)
@@ -101,8 +101,7 @@ public class Player extends GameData {
 			super.setCurrentHealth(super.getMaxHealth());
 			//Restores player's health back to maximum
 		}
-		
-		if(levelPoint == 2)
+		else if(levelPoint == 2)
 		{
 			incVitality();
 			//Allocates 2 points to health (10 per point=20+ to maximum health)
@@ -120,6 +119,12 @@ public class Player extends GameData {
 		
 		this.numPotions++;
 		
+	}
+	
+	public int getNumPotion() {
+		
+		return numPotions;
+				
 	}
 	
 }
