@@ -1,16 +1,24 @@
+import java.util.Scanner;
 
 public class Player extends GameData {
 
 	private int maxExp;
+	private int currentExp;
+	private int level;
+	
 	private int numPotions;
 	private int vitalityPoints;
+	
+	private Scanner input = new Scanner(System.in);
 	
 	public Player(String nm, int attk, int maxHP) {
 		
 		super(nm, attk, maxHP);
 		this.vitalityPoints = 0;
 		this.numPotions = 5;
-		
+		this.maxExp = 100;
+		this.currentExp = 0;
+		this.level = 1;
 	}
 	
 	
@@ -52,6 +60,66 @@ public class Player extends GameData {
 			System.out.println("No potions remaining");
 		}
 	
+	}
+	
+	//Adds experience gained to current experience and checks for levelups
+	public void addExp(int expGained) {
+		
+		this.currentExp += expGained;
+		
+		System.out.println("\nYou have defeated the monster and gained " + expGained + " experience" );
+		System.out.println("You now have " + currentExp + "/" + maxExp + " experience");
+		
+		if(currentExp >= maxExp) {
+			levelup();
+		}
+		
+	}
+	
+	public void levelup() {
+		
+		this.level++;
+		this.currentExp = 0;
+		this.maxExp = 100+level*20;
+		//Increases the level of the player and carries over any experience over the required experience for the next level
+		//Required experience for next level is also calculated
+		
+		
+		System.out.println("Congratulations! You have leveled up! You are now level " + level +" You may put 1 point into your attack damage or max health");
+		System.out.println("1. Attack Damage");
+		System.out.println("2. Max Health");
+		int levelPoint = input.nextInt();
+		//Allows the user to allocate 1 point to attack damage or health if they level up
+		
+		if(levelPoint == 1)
+		{
+			super.setAttkdmgPoints(super.getAttkdmgPoints() + 2);
+			//Allocates 2 points to attack damage
+
+			System.out.println("You now have " + super.getAttkdmgPoints() + " attack damage points");
+		
+			super.setCurrentHealth(super.getMaxHealth());
+			//Restores player's health back to maximum
+		}
+		
+		if(levelPoint == 2)
+		{
+			incVitality();
+			//Allocates 2 points to health (10 per point=20+ to maximum health)
+			
+			System.out.println("You now have " + getVitality() + " health points (max health: " + super.getMaxHealth() + ")");
+			//Allocates a point to health
+			
+			super.setCurrentHealth(super.getMaxHealth());
+			//Restores player's health back to maximum
+		}
+		
+	}
+	
+	public void incPotion() {
+		
+		this.numPotions++;
+		
 	}
 	
 }

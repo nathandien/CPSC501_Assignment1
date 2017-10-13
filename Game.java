@@ -3,20 +3,24 @@ import java.util.Scanner;
 
 public class Game {
 	
+	private static Scanner input = new Scanner (System.in);
+	private static Random rnd = new Random();
+	private static GameData monster[];
+	private static Player player;
 	/**
 	 * @param arg
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Scanner input = new Scanner (System.in);
-		Random rnd=new Random();
+		//Scanner input = new Scanner (System.in);
+		//Random rnd=new Random();
 
-		Player player = new Player("Player", 10, 100);
+		input = new Scanner (System.in);
+		rnd = new Random();
+		player = new Player("Player", 10, 100);
 		
-		
-		GameData monster[] = new GameData[6];
-		
+		monster = new GameData[6];
 		monster[0] = new GameData("dog", 4, 30);
 		monster[1] = new GameData("boar", 3, 50);
 		monster[2] = new GameData("skeleton", 6, 25);
@@ -25,22 +29,16 @@ public class Game {
 
 	
 		
-		int start = 0, whatDo, monsterNumber = 0, monsterAppear = 0, action, damageDealtPlayer, damageDealtMonster, levelPoint;
-		int level = 1, reqExp = 100, expGained, haveExp = 0;
-		int potion = 5, potionChance, flee;
-		
+		int start = 0, whatDo = 0;
+
 			System.out.println("****Monster Rush****");
 			System.out.println("Press 1 to begin!");
 			start = input.nextInt();
 			
 			while(player.getCurrentHealth() > 0 && start == 1)
 			{
-				//Starts the game
-				System.out.println("\nWhat would you like to do?");
-				System.out.println("Type in the following number to perform the respective action");
-				System.out.println("1. Fight a monster");
-				System.out.println("2. Use a potion");
-				whatDo = input.nextInt();
+
+				whatDo = actionStart();
 				//Asks player to choose an action
 				
 				
@@ -51,188 +49,162 @@ public class Game {
 				
 				if(whatDo == 1)
 				{
-					monsterAppear = 1;
-					//Used so that the "monster has appeared" only displays once
-					
-					
+						battle();
 				}
-					while(whatDo == 1)
-					{			
-						if(monsterAppear == 1)
-							{	
-							monsterNumber = rnd.nextInt(5);
-							//Randomizes a number
-							//Player fights a monster with the respective number
-							System.out.println(monsterNumber);
-							//Remove after ***********************************
-							
-							System.out.println("\nA wild " + monster[monsterNumber].getName()+ " appears before you");
-							monsterAppear = 0;
-							
-							}
-							
-						
-						System.out.println("What do you want to do?");
-						System.out.println("1. Attack monster");
-						System.out.println("2. Use a potion");
-						System.out.println("3. Flee");
-						action = input.nextInt();
-						//User chooses a course of action
 					
-						if(action == 1)//Attack monster
-						{
-							
-							damageDealtMonster = (int)player.calculateDmgDealt();
-							System.out.println("\nYou inflicted " + damageDealtMonster + " damage");
-							monster[monsterNumber].setCurrentHealth(monster[monsterNumber].getCurrentHealth() - damageDealtMonster);
-							System.out.println("The " + monster[monsterNumber].getName() + " has " + monster[monsterNumber].getCurrentHealth() + "/" + monster[monsterNumber].getMaxHealth() + " health remaining");
-							//Deals damage to monster (subtracts health by damage)
-						
-							
-							if(monster[monsterNumber].getCurrentHealth() <= 0) //Monster has been defeated
-							{
-								potionChance = rnd.nextInt(10); //Randomizes a number to determine if player receives a potion
-								if(potionChance <= 3)
-								{
-									potion++;
-									System.out.println("\nYou found 1 potion!");//If player has found a potion
-								}
-								else
-									System.out.println("\nYou search the monster and find nothing");//If player has found nothing
-								
-								
-								
-								expGained = rnd.nextInt(25) + 5 + ((monster[monsterNumber].getCurrentHealth()*2 + (int)(monster[monsterNumber].getAttkdmg())*5)/3);
-								haveExp = haveExp + expGained;
-								monster[monsterNumber].setCurrentHealth(20);
-								//Player gains experience based on monster, and resets the monsters health
-							
-								System.out.println("\nYou have defeated the monster and gained " + expGained + " experience" );
-								System.out.println("You now have " + haveExp + "/" + reqExp + " experience");
-							
-								if(haveExp >= reqExp)
-								{
-									level++;
-									haveExp = haveExp - reqExp;
-									reqExp = 100+level*20;
-									//Increases the level of the player and carries over any experience over the required experience for the next level
-									//Required experience for next level is also calculated
-									
-									
-									System.out.println("Congratulations! You have leveled up! You are now level " + level +" You may put 1 point into your attack damage or max health");
-									System.out.println("1. Attack Damage");
-									System.out.println("2. Max Health");
-									levelPoint = input.nextInt();
-									//Allows the user to allocate 1 point to attack damage or health if they level up
-									
-									if(levelPoint == 1)
-										{
-										player.setAttkdmgPoints(player.getAttkdmgPoints() + 2);
-										//Allocates 2 points to attack damage
-							
-										System.out.println("You now have " + player.getAttkdmgPoints() + " attack damage points");
-									
-										player.setCurrentHealth(player.getMaxHealth());
-										//Restores player's health back to maximum
-										}
-									
-									if(levelPoint == 2)
-									{
-										player.incVitality();
-										//Allocates 2 points to health (10 per point=20+ to maximum health)
-										
-										System.out.println("You now have " + player.getVitality() + " health points (max health: " + player.getMaxHealth() + ")");
-										//Allocates a point to health
-										
-										player.setCurrentHealth(player.getMaxHealth());
-										//Restores player's health back to maximum
-									}
-								}
-								break;
-								//Ends the fight if the monsters health reaches 0
-							}
-							if(monster[monsterNumber].getCurrentHealth() > 0) //Monster is still alive and deals damage to player
-							{
-							
-								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
-								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
-								//Monster attacks and deals damage to player
-								
-								if(player.getCurrentHealth() <= 0)
-								{
-									System.out.println("Game over \nYou have died");
-									break;
-									//Ends the game if the player's health drops to or below 0
-								}
-							}
-							
-						}
-						
-						if(action == 2)//Use potion
-						{
-
-							if(player.getCurrentHealth() == player.getMaxHealth())
-							{
-								System.out.println("You are already full health");
-							}
-							else
-							{
-								
-								player.usePotion();
-								//Monster will attack player after using potion
-							
-								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
-								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
-								//Monster attacks and deals damage to player
-							
-								if(player.getCurrentHealth() <= 0)
-								{
-									System.out.println("Game over \nYou have died");
-									break;
-									//Ends the game if the player's health drops to or below 0
-								}
-							}
-							
-						}
-						
-						if(action == 3)//Player attempts to flee
-						{
-							flee = rnd.nextInt(11); //Randomizes a number to determine if the player successfully flees
-							if(flee < 5) //If the randomized number is less than 6, the player successfully flees, else flees and takes damage
-							{
-								System.out.println("You successfully fled away from the monster!");
-								whatDo = 0;
-							}
-							else
-							{
-								System.out.println("You failed to flee away from the monster");
-								
-								//Deals damage to the player if they fail to flee
-							
-								damageDealtPlayer = (int)monster[monsterNumber].calculateDmgDealt();
-								System.out.println("The " + monster[monsterNumber].getName() +" inflicted " + damageDealtPlayer + " damage to you");
-								player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
-								System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
-								//Monster attacks and deals damage to player
-							
-								if(player.getCurrentHealth() <= 0)
-								{
-									System.out.println("Game over \nYou have died");
-									break;
-									//Ends the game if the player's health drops to or below 0
-								}
-								
-							}
-						}
-				}whatDo = 0;
+				whatDo = 0;
 				//Resets whatDo back to 0, returns player to menu (asks player if they want to fight more monsters
 				
 
 			}//Game start
 	}
+	
+	//Asks player for an action to take
+	public static int actionStart() {
+		
+		System.out.println("\nWhat would you like to do?");
+		System.out.println("Type in the following number to perform the respective action");
+		System.out.println("1. Fight a monster");
+		System.out.println("2. Use a potion");
+		
+		return input.nextInt();
+
+	}
+	
+	public static void battle() {
+		
+		int monsterNumber = rnd.nextInt(5);
+		//Randomizes a number
+		//Player fights a monster with the respective number
+		//System.out.println(monsterNumber);					monsterAppear = 1;
+					//Used so that the "monster has appeared" only displays once
+		//Remove after ***********************************
+		
+		System.out.println("\nA wild " + monster[monsterNumber].getName()+ " appears before you");
+		
+		
+		while(true) {
+			
+			System.out.println("What do you want to do?");
+			System.out.println("1. Attack monster");
+			System.out.println("2. Use a potion");
+			System.out.println("3. Flee");
+			
+			int action = input.nextInt();
+			
+			if(action == 1) {
+				
+				//Player attacks and deals damage to monster
+				if(!playerAttack(monsterNumber)) {
+					break;
+				}
+		
+				//Monster attacks and deals damage to player
+				monsterAttack(monsterNumber);
+				
+							
+			}
+			else if(action == 2) {
+				
+				if(player.getCurrentHealth() == player.getMaxHealth())
+				{
+					System.out.println("You are already full health");
+				}
+				else
+				{
+				
+					player.usePotion();
+					//Monster will attack player after using potion
+					monsterAttack(monsterNumber);
+			
+				}
+				
+			}
+			else if(action == 3) {
+				
+				int flee = rnd.nextInt(11); //Randomizes a number to determine if the player successfully flees
+				if(flee < 5) //If the randomized number is less than 6, the player successfully flees, else flees and takes damage
+				{
+					System.out.println("You successfully fled away from the monster!");
+					actionStart();
+				}
+				else
+				{
+					System.out.println("You failed to flee away from the monster");
+					
+					//Deals damage to the player if they fail to flee
+					monsterAttack(monsterNumber);
+					
+				}
+				
+			}
+		}
+	}
+	
+	//Player attacks monster
+	//Checks to see if monster has been killed (return true or false)
+	public static boolean playerAttack(int monsterNum) {
+		
+		int damageDealtMonster = (int)player.calculateDmgDealt();
+		System.out.println("\nYou inflicted " + damageDealtMonster + " damage");
+		monster[monsterNum].setCurrentHealth(monster[monsterNum].getCurrentHealth() - damageDealtMonster);
+		System.out.println("The " + monster[monsterNum].getName() + " has " + monster[monsterNum].getCurrentHealth() + "/" + monster[monsterNum].getMaxHealth() + " health remaining");
+		
+		if(monster[monsterNum].getCurrentHealth() <= 0) {
+			
+			monsterDefeated(monsterNum);
+			return false;
+			
+		}
+		return true;
+		
+	}
+	
+	//Monster attacks player and deals damage
+	//Checks to see if player has died (quit game)
+	public static void monsterAttack(int monsterNum) {
+		
+		int damageDealtPlayer = (int)monster[monsterNum].calculateDmgDealt();
+		System.out.println("The " + monster[monsterNum].getName() +" inflicted " + damageDealtPlayer + " damage to you");
+		player.setCurrentHealth(player.getCurrentHealth() - damageDealtPlayer);
+		System.out.println("You have " + player.getCurrentHealth() + "/" + player.getMaxHealth() + " health remaining\n");
+		//Monster attacks and deals damage to player
+		
+		//Ends the game if the player's health drops to 0
+		if(player.getCurrentHealth() <= 0) {
+			
+			System.out.println("Game over \nYou have died");
+			System.exit(0);
+			
+		}
+		
+	}
+	
+	public static void monsterDefeated(int monsterNum) {
+
+			int potionChance = rnd.nextInt(10); //Randomizes a number to determine if player receives a potion
+			
+			if(potionChance <= 3)
+			{
+				player.incPotion();
+				System.out.println("\nYou found 1 potion!");//If player has found a potion
+			}
+			else 
+			{
+				System.out.println("\nYou search the monster and find nothing");//If player has found nothing
+			}
+			
+			//Calculates experience gained based on monster difficulty
+			int expGained = rnd.nextInt(25) + 5 + ((monster[monsterNum].getCurrentHealth()*2 + (int)(monster[monsterNum].getAttkdmg())*5)/3);
+			
+			
+			player.addExp(expGained);
+			
+			//Resets monster health
+			monster[monsterNum].setCurrentHealth(monster[monsterNum].getMaxHealth());
+
+		
+
+		}
 
 }
